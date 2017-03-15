@@ -9,16 +9,23 @@ import {
     View,
     StatusBar,
     ListView,
-    Image
+    Image,
+    TouchableHighlight,
 } from 'react-native';
+
+import InfiniteScrollView from 'react-native-infinite-scroll-view';
 
 export default class ListMovie extends Component {
 
     constructor() {
         super();
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            movies: ds.cloneWithRows([]),
+            now_playing: 'https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=',
+            top_rated: 'https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=',
+            page: 0,
+            moviesList: [],
+            moviesDB: dataSource.cloneWithRows([]),
         };
     }
 
@@ -27,11 +34,13 @@ export default class ListMovie extends Component {
     }
 
     fetchData() {
-        return fetch('https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed')
+        this.state.page++;
+        return fetch(this.state.now_playing + this.state.page)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
-                    movies: this.state.movies.cloneWithRows(responseJson.results)
+                    movieList: this.state.moviesList.concat(responseJson.results),
+                    moviesDB: this.state.moviesDB.cloneWithRows(this.state.moviesList.concat(responseJson.results))
                 })
             })
             .catch((error) => {
@@ -39,40 +48,62 @@ export default class ListMovie extends Component {
             });
     }
 
+    _onPressButton() {
+        alert("You tapped the button!");
+    }
+
     render() {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}/>
                 <ListView
-                    dataSource={this.state.movies}
-                    renderRow={this.movieCell}
+                    dataSource={this.state.moviesDB}
+                    renderRow={this.movieCell.bind(this)}
                 />
-
             </View>
         );
     }
 
-    movieCell(rowData) {
+    movieCell(movie) {
         return (
-            <View style={styles.row}>
-                <View style={styles.poster}>
-                    <Image style={{ height: 150,}}
-                           source={{uri:"https://image.tmdb.org/t/p/w342/" + rowData.poster_path}}/>
-                </View>
+            <TouchableHighlight
+                underlayColor="white"
+                activeOpacity={0.3}
+                onPress={() => this.toMovieDetail(movie)}
+            >
 
-                <View style={styles.content}>
-                    <Text>{rowData.title}</Text>
-                    <Text>{rowData.overview}</Text>
+                <View style={styles.row}>
+                    <View style={styles.poster}>
+                        <Image style={styles.image}
+                               resizeMode="contain"
+                               source={{uri:"https://image.tmdb.org/t/p/w342/" + movie.poster_path}}/>
+                    </View>
+
+                    <View style={styles.content}>
+                        <Text style={styles.title}>{movie.title}</Text>
+                        <Text style={styles.description}
+                              numberOfLines={4}>{movie.overview}</Text>
+                    </View>
                 </View>
-            </View>
+            </TouchableHighlight>
         );
-
     }
+
+    toMovieDetail(movie) {
+        alert(movie.id)
+    }
+
 }
+
+
+const onButtonPress = () => {
+    alert('Button has been pressed!');
+};
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'orange',
+        padding: 10,
     },
 
     row: {
@@ -82,17 +113,24 @@ const styles = StyleSheet.create({
 
     poster: {
         flex: 3,
-        margin: 10,
+        margin: 5,
     },
 
     content: {
         flex: 7,
-
     },
 
-    title: {},
+    image: {
+        height: 150,
+    },
 
-    description: {}
+    title: {
+        fontSize: 23,
+    },
+
+    description: {
+        fontSize: 16,
+    },
 
 
 });
