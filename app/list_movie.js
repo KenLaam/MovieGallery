@@ -11,6 +11,7 @@ import {
     ListView,
     Image,
     TouchableHighlight,
+    RefreshControl,
 } from 'react-native';
 
 import InfiniteScrollView from 'react-native-infinite-scroll-view';
@@ -26,11 +27,26 @@ export default class ListMovie extends Component {
             page: 0,
             moviesList: [],
             moviesDB: dataSource.cloneWithRows([]),
+            refreshing: false,
         };
     }
 
     componentDidMount() {
         this.fetchData()
+    }
+
+    refreshData() {
+        const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.setState({
+            page: 0,
+            moviesList: [],
+            moviesDB: dataSource.cloneWithRows([]),
+            refreshing: true,
+        });
+        this.fetchData()
+            .then(() => this.setState({
+                refreshing: false,
+            }));
     }
 
     fetchData() {
@@ -55,8 +71,15 @@ export default class ListMovie extends Component {
             <View style={styles.container}>
                 <StatusBar hidden={true}/>
                 <ListView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.refreshData.bind(this)}
+                        />}
                     dataSource={this.state.moviesDB}
                     renderRow={this.movieCell.bind(this)}
+                    onEndReachedThreshold={3}
+                    onEndReached={this.fetchData()}
                 />
             </View>
         );
@@ -88,7 +111,7 @@ export default class ListMovie extends Component {
     }
 
     toMovieDetail(movie) {
-        this.fetchData()
+        console.log(movie.id);
     }
 
 }
@@ -101,7 +124,6 @@ const onButtonPress = () => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'orange',
-        padding: 10,
     },
 
     row: {
