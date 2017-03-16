@@ -38,18 +38,16 @@ export default class ListMovie extends Component {
         return fetch(this.state.now_playing + this.state.page)
             .then((response) => response.json())
             .then((responseJson) => {
+                console.log("before " + (this.state.moviesList.concat(responseJson.results)).length);
                 this.setState({
-                    movieList: this.state.moviesList.concat(responseJson.results),
+                    moviesList: this.state.moviesList.concat(responseJson.results),
                     moviesDB: this.state.moviesDB.cloneWithRows(this.state.moviesList.concat(responseJson.results))
-                })
+                });
+                console.log("after " + this.state.moviesList.length);
             })
             .catch((error) => {
                 console.error(error);
             });
-    }
-
-    _onPressButton() {
-        alert("You tapped the button!");
     }
 
     render() {
@@ -90,7 +88,7 @@ export default class ListMovie extends Component {
     }
 
     toMovieDetail(movie) {
-        alert(movie.id)
+        this.fetchData()
     }
 
 }
