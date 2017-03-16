@@ -14,8 +14,6 @@ import {
     RefreshControl,
 } from 'react-native';
 
-import InfiniteScrollView from 'react-native-infinite-scroll-view';
-
 export default class ListMovie extends Component {
 
     constructor() {
@@ -25,8 +23,8 @@ export default class ListMovie extends Component {
             now_playing: 'https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=',
             top_rated: 'https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=',
             page: 0,
-            moviesList: [],
-            moviesDB: dataSource.cloneWithRows([]),
+            movieList: [],
+            movieDS: dataSource.cloneWithRows([]),
             refreshing: false,
         };
     }
@@ -36,13 +34,12 @@ export default class ListMovie extends Component {
     }
 
     refreshData() {
-        const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.setState({
             page: 0,
-            moviesList: [],
-            moviesDB: dataSource.cloneWithRows([]),
+            movieList: [],
             refreshing: true,
         });
+
         this.fetchData()
             .then(() => this.setState({
                 refreshing: false,
@@ -54,12 +51,10 @@ export default class ListMovie extends Component {
         return fetch(this.state.now_playing + this.state.page)
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log("before " + (this.state.moviesList.concat(responseJson.results)).length);
                 this.setState({
-                    moviesList: this.state.moviesList.concat(responseJson.results),
-                    moviesDB: this.state.moviesDB.cloneWithRows(this.state.moviesList.concat(responseJson.results))
+                    movieList: this.state.movieList.concat(responseJson.results),
+                    movieDS: this.state.movieDS.cloneWithRows(this.state.movieList.concat(responseJson.results))
                 });
-                console.log("after " + this.state.moviesList.length);
             })
             .catch((error) => {
                 console.error(error);
@@ -76,21 +71,22 @@ export default class ListMovie extends Component {
                             refreshing={this.state.refreshing}
                             onRefresh={this.refreshData.bind(this)}
                         />}
-                    dataSource={this.state.moviesDB}
-                    renderRow={this.movieCell.bind(this)}
+                    dataSource={this.state.movieDS}
+                    renderRow={(movie)=>this._renderMovieCell(movie)}
                     onEndReachedThreshold={3}
-                    onEndReached={this.fetchData()}
+                    enableEmptySections={true}
+                    onEndReached={() => this.fetchData()}
                 />
             </View>
         );
     }
 
-    movieCell(movie) {
+    _renderMovieCell(movie) {
         return (
             <TouchableHighlight
                 underlayColor="white"
                 activeOpacity={0.3}
-                onPress={() => this.toMovieDetail(movie)}
+                onPress={() => this._clickOnMovie(movie)}
             >
 
                 <View style={styles.row}>
@@ -110,7 +106,7 @@ export default class ListMovie extends Component {
         );
     }
 
-    toMovieDetail(movie) {
+    _clickOnMovie(movie) {
         console.log(movie.id);
     }
 
