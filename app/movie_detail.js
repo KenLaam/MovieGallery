@@ -12,13 +12,31 @@ import {
     Image,
     TouchableHighlight,
     RefreshControl,
+    NavigatorIOS,
 } from 'react-native';
 
 export default class MovieDetail extends Component {
+    constructor(props) {
+        super(props);
+        var movie = this.props.movie;
+    }
+
+    componentDidMount() {
+        console.log(this.props.movie.id);
+    }
+
     render() {
         return (
-            <View></View>
+            <View>
+
+
+            </View>
         );
 
     }
 }
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: 'orange',
+    },
+});

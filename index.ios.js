@@ -9,10 +9,11 @@ import {
     AppRegistry,
     StyleSheet,
     Text,
-    View
+    View,
+    NavigatorIOS
 } from 'react-native';
 
-import ListMovie from "./app/list_movie"
+import ListMovie from "./app/list_movie";
 
 export default class MovieGallery extends Component {
     render() {

@@ -12,46 +12,51 @@ import {
     Image,
     TouchableHighlight,
     RefreshControl,
+    TabBarIOS,
+    NavigatorIOS,
 } from 'react-native';
 
 export default class ListMovie extends Component {
+
+    now_playing = 'https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=';
+    top_rated = 'https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=';
 
     constructor() {
         super();
         const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            now_playing: 'https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=',
-            top_rated: 'https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=',
-            page: 0,
+            url: this.now_playing,
+            page: 1,
             movieList: [],
             movieDS: dataSource.cloneWithRows([]),
             refreshing: false,
+            selectedTab: "nowPlaying",
         };
     }
 
     componentDidMount() {
-        this.fetchData()
+        this._fetchData();
     }
 
-    refreshData() {
+    _refreshData() {
         this.setState({
-            page: 0,
+            page: 1,
             movieList: [],
             refreshing: true,
         });
 
-        this.fetchData()
+        this._fetchData()
             .then(() => this.setState({
                 refreshing: false,
             }));
     }
 
-    fetchData() {
-        this.state.page++;
-        return fetch(this.state.now_playing + this.state.page)
+    _fetchData() {
+        return fetch(this.state.url + this.state.page)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
+                    page: this.state.page++,
                     movieList: this.state.movieList.concat(responseJson.results),
                     movieDS: this.state.movieDS.cloneWithRows(this.state.movieList.concat(responseJson.results))
                 });
@@ -61,7 +66,54 @@ export default class ListMovie extends Component {
             });
     }
 
+    _fetchNowPlaying() {
+        this.state.url = this.now_playing;
+        this.state.page = 1;
+        this.state.movieList = [];
+        this.state.selectedTab = "nowPlaying";
+        this._fetchData();
+    }
+
+    _fetchTopRated() {
+        this.state.url = this.top_rated;
+        this.state.page = 1;
+        this.state.movieList = [];
+        this.state.selectedTab = "topRated";
+        this._fetchData();
+    }
+
     render() {
+        return (
+            <TabBarIOS
+                tintColor="black"
+                unselectedTintColor="#8F9393"
+                barTintColor="#EABD67">
+                <TabBarIOS.Item
+                    icon={require('./assets/ic_play.png')}
+                    title="Now Playing"
+                    selected={this.state.selectedTab === 'nowPlaying'}
+                    onPress={() => {
+                        this._fetchNowPlaying()
+                    }}
+                >
+                    {this._renderMovieList()}
+                </TabBarIOS.Item>
+                <TabBarIOS.Item
+                    icon={require('./assets/ic_star.png')}
+                    title="Top Rated"
+                    selected={this.state.selectedTab === 'topRated'}
+                    onPress={() => {
+                       this._fetchTopRated()
+                    }}
+                >
+                    {this._renderMovieList()}
+                </TabBarIOS.Item>
+
+            </TabBarIOS>
+        );
+    }
+
+    _renderMovieList() {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}/>
@@ -69,13 +121,13 @@ export default class ListMovie extends Component {
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}
-                            onRefresh={this.refreshData.bind(this)}
+                            onRefresh={this._refreshData.bind(this)}
                         />}
                     dataSource={this.state.movieDS}
                     renderRow={(movie)=>this._renderMovieCell(movie)}
-                    onEndReachedThreshold={3}
+                    onEndReachedThreshold={2}
                     enableEmptySections={true}
-                    onEndReached={() => this.fetchData()}
+                    onEndReached={() => this._fetchData()}
                 />
             </View>
         );
@@ -85,8 +137,8 @@ export default class ListMovie extends Component {
         return (
             <TouchableHighlight
                 underlayColor="white"
-                activeOpacity={0.3}
-                onPress={() => this._clickOnMovie(movie)}
+                activeOpacity={0.23}
+                onPress={() => this._clickToDetail(movie)}
             >
 
                 <View style={styles.row}>
@@ -106,16 +158,11 @@ export default class ListMovie extends Component {
         );
     }
 
-    _clickOnMovie(movie) {
-        console.log(movie.id);
+    _clickToDetail(movie) {
+        console.log('Movie  id', movie.id);
     }
 
 }
-
-
-const onButtonPress = () => {
-    alert('Button has been pressed!');
-};
 
 const styles = StyleSheet.create({
     container: {
@@ -147,6 +194,4 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 16,
     },
-
-
 });
