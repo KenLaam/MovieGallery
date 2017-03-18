@@ -9,12 +9,15 @@ import {
     View,
     StatusBar,
     ListView,
-    Image,
     TouchableHighlight,
     RefreshControl,
     TabBarIOS,
     NavigatorIOS,
 } from 'react-native';
+
+import Image from 'react-native-image-progress';
+import Progress from 'react-native-progress';
+
 
 export default class ListMovie extends Component {
 
@@ -30,7 +33,7 @@ export default class ListMovie extends Component {
             movieList: [],
             movieDS: dataSource.cloneWithRows([]),
             refreshing: false,
-            selectedTab: "nowPlaying",
+            selectedTab: 'nowPlaying',
         };
     }
 
@@ -70,7 +73,7 @@ export default class ListMovie extends Component {
         this.state.url = this.now_playing;
         this.state.page = 1;
         this.state.movieList = [];
-        this.state.selectedTab = "nowPlaying";
+        this.state.selectedTab = 'nowPlaying';
         this._fetchData();
     }
 
@@ -78,19 +81,19 @@ export default class ListMovie extends Component {
         this.state.url = this.top_rated;
         this.state.page = 1;
         this.state.movieList = [];
-        this.state.selectedTab = "topRated";
+        this.state.selectedTab = 'topRated';
         this._fetchData();
     }
 
     render() {
         return (
             <TabBarIOS
-                tintColor="black"
-                unselectedTintColor="#8F9393"
-                barTintColor="#EABD67">
+                tintColor='black'
+                unselectedTintColor='#8F9393'
+                barTintColor='#EABD67'>
                 <TabBarIOS.Item
                     icon={require('./assets/ic_play.png')}
-                    title="Now Playing"
+                    title='Now Playing'
                     selected={this.state.selectedTab === 'nowPlaying'}
                     onPress={() => {
                         this._fetchNowPlaying()
@@ -100,7 +103,7 @@ export default class ListMovie extends Component {
                 </TabBarIOS.Item>
                 <TabBarIOS.Item
                     icon={require('./assets/ic_star.png')}
-                    title="Top Rated"
+                    title='Top Rated'
                     selected={this.state.selectedTab === 'topRated'}
                     onPress={() => {
                        this._fetchTopRated()
@@ -136,7 +139,7 @@ export default class ListMovie extends Component {
     _renderMovieCell(movie) {
         return (
             <TouchableHighlight
-                underlayColor="white"
+                underlayColor='white'
                 activeOpacity={0.23}
                 onPress={() => this._clickToDetail(movie)}
             >
@@ -144,7 +147,8 @@ export default class ListMovie extends Component {
                 <View style={styles.row}>
                     <View style={styles.poster}>
                         <Image style={styles.image}
-                               resizeMode="contain"
+                               resizeMode='contain'
+                               indicator={Progress}
                                source={{uri:"https://image.tmdb.org/t/p/w342/" + movie.poster_path}}/>
                     </View>
 
@@ -195,3 +199,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 });
+module.exports = ListMovie;

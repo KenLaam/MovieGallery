@@ -18,7 +18,6 @@ import {
 export default class MovieDetail extends Component {
     constructor(props) {
         super(props);
-        var movie = this.props.movie;
     }
 
     componentDidMount() {
@@ -28,7 +27,6 @@ export default class MovieDetail extends Component {
     render() {
         return (
             <View>
-
 
             </View>
         );

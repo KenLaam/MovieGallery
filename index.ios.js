@@ -18,9 +18,23 @@ import ListMovie from "./app/list_movie";
 export default class MovieGallery extends Component {
     render() {
         return (
-            <ListMovie/>
+            <NavigatorIOS
+                initialRoute={{
+                    component: ListMovie,
+                    title: 'Movie Gallery',
+                }}
+                style={styles.navbar}
+                barTintColor={'orange'}
+            />
         );
     }
 }
+
+const styles = StyleSheet.create({
+    navbar: {
+        flex: 1,
+        backgroundColor: 'orange',
+    }
+});
 
 AppRegistry.registerComponent('MovieGallery', () => MovieGallery);
