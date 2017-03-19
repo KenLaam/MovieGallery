@@ -79,7 +79,7 @@ export default class MovieDetail extends Component {
         if (height == 200) {
             height = 50;
             lines  = 0;
-            marginScroll = 300;
+            marginScroll = 200;
         } else {
             height = 200;
             lines  = 2;

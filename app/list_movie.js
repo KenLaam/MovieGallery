@@ -49,6 +49,7 @@ export default class ListMovie extends Component {
     }
 
     _fetchData() {
+        StatusBar.setNetworkActivityIndicatorVisible(true);
         return fetch(this.state.url + this.state.page)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -58,56 +59,30 @@ export default class ListMovie extends Component {
                     movieDS: this.state.movieDS.cloneWithRows(this.state.movieList.concat(responseJson.results)),
                     refreshing: false,
                 });
+                StatusBar.setNetworkActivityIndicatorVisible(false);
             })
             .catch((error) => {
                 console.error(error);
             });
     }
 
-    _fetchNowPlaying() {
-        this.state.url = this.now_playing;
-        this.state.page = 1;
-        this.state.movieList = [];
-        this.state.selectedTab = 'nowPlaying';
-        this._fetchData();
-    }
-
-    _fetchTopRated() {
-        this.state.url = this.top_rated;
-        this.state.page = 1;
-        this.state.movieList = [];
-        this.state.selectedTab = 'topRated';
-        this._fetchData();
-    }
-
     render() {
+        var rows;
+        if (this.state.movieDS.getRowCount() === 0) {
+            rows = this._renderNoData();
+        } else {
+            rows = this._renderMovieList();
+        }
         return (
-            <TabBarIOS
-                tintColor='black'
-                unselectedTintColor='#8F9393'
-                barTintColor='#FFA726'>
-                <TabBarIOS.Item
-                    icon={require('./assets/ic_play.png')}
-                    title='Now Playing'
-                    selected={this.state.selectedTab === 'nowPlaying'}
-                    onPress={() => {
-                        this._fetchNowPlaying()
-                    }}
-                >
-                    {this._renderMovieList()}
-                </TabBarIOS.Item>
-                <TabBarIOS.Item
-                    icon={require('./assets/ic_star.png')}
-                    title='Top Rated'
-                    selected={this.state.selectedTab === 'topRated'}
-                    onPress={() => {
-                       this._fetchTopRated()
-                    }}
-                    style={styles.icon}
-                >
-                    {this._renderMovieList()}
-                </TabBarIOS.Item>
-            </TabBarIOS>
+            this._renderMovieList()
+        );
+    }
+
+    _renderNoData() {
+        return (
+            <View style={[styles.container,{flex: 1,justifyContent: 'center', alignItems: 'center',}]}>
+                <Text>Loading ...</Text>
+            </View>
         );
     }
 
