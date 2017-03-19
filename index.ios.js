@@ -10,23 +10,73 @@ import {
     StyleSheet,
     Text,
     View,
-    NavigatorIOS
+    NavigatorIOS,
+    TabBarIOS
 } from 'react-native';
 
 import ListMovie from "./app/list_movie";
 
 export default class MovieGallery extends Component {
+
+    now_playing = 'https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=';
+    top_rated = 'https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=';
+
+    constructor() {
+        super();
+        this.state = {
+            selectedTab: 'nowPlaying',
+        };
+    }
+
     render() {
         return (
-            <NavigatorIOS
-                initialRoute={{
-                    component: ListMovie,
-                    title: 'Movie Gallery',
-                }}
-                style={styles.navbar}
-                barTintColor={'#FFA726'}
-                shadowHidden={false}
-            />
+            <TabBarIOS
+                tintColor='black'
+                unselectedTintColor='#8F9393'
+                barTintColor='#FFA726'>
+                <TabBarIOS.Item
+                    icon={require('./app/assets/ic_play.png')}
+                    title='Now Playing'
+                    selected={this.state.selectedTab === 'nowPlaying'}
+                    onPress={() => {
+                        this._fetchNowPlaying()
+                    }}
+                >
+                    <NavigatorIOS
+                        initialRoute={{
+                            component: ListMovie,
+                            title: 'Movie Gallery',
+                            backButtonTitle: 'Back',
+                            passProps: {
+                                baseUrl: this.now_playing,
+                            }
+                        }}
+                        style={styles.navbar}
+                        barTintColor={'#FFA726'}
+                    />
+                </TabBarIOS.Item>
+                <TabBarIOS.Item
+                    icon={require('./app/assets/ic_star.png')}
+                    title='Top Rated'
+                    selected={this.state.selectedTab === 'topRated'}
+                    onPress={() => {
+                       this._fetchTopRated()
+                    }}
+                >
+                    <NavigatorIOS
+                        initialRoute={{
+                            component: ListMovie,
+                            title: 'Movie Gallery',
+                            backButtonTitle: 'Back',
+                            passProps: {
+                                baseUrl: this.top_rated,
+                            }
+                        }}
+                        style={styles.navbar}
+                        barTintColor={'#FFA726'}
+                    />
+                </TabBarIOS.Item>
+            </TabBarIOS>
         );
     }
 }

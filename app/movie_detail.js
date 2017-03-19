@@ -9,30 +9,28 @@ import {
     View,
     StatusBar,
     ListView,
-    TouchableHighlight,
-    RefreshControl,
-    NavigatorIOS,
+    Image,
 } from 'react-native';
 
-import Image from 'react-native-image-progress';
+// import Image from 'react-native-image-progress';
 import Progress from 'react-native-progress';
 
 
 export default class MovieDetail extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
-        console.log(this.props.movie.id);
+        console.log(this.props.movie);
     }
 
     render() {
         return (
             <Image style={styles.image}
-                   resizeMode='contain'
-                   indicator={Progress}
-                   source={{uri:"https://image.tmdb.org/t/p/w342/" + this.props.movie.poster_path}}/>
+                   resizeMode='cover'
+                   source={{uri:"https://image.tmdb.org/t/p/w342/" + this.props.movie.poster_path}}
+            >
+                <Text
+                    style={styles.description}
+                >{this.props.movie.overview}</Text>
+            </Image>
         );
 
     }
@@ -40,7 +38,11 @@ export default class MovieDetail extends Component {
 const styles = StyleSheet.create({
     image: {
         flex: 1,
-        resizeMode: 'cover',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
+    description: {
+        backgroundColor: 'transparent'
+    }
 });
 module.exports = MovieDetail;

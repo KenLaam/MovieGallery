@@ -21,15 +21,11 @@ import Progress from 'react-native-progress';
 import MovieDetail from "./movie_detail"
 
 export default class ListMovie extends Component {
-
-    now_playing = 'https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=';
-    top_rated = 'https://api.themoviedb.org/3/movie/top_rated?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=';
-
     constructor() {
         super();
         const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            url: this.now_playing,
+            url: this.props.baseUrl,
             page: 1,
             movieList: [],
             movieDS: dataSource.cloneWithRows([]),
@@ -164,10 +160,9 @@ export default class ListMovie extends Component {
     _clickToDetail(movie) {
         this.props.navigator.push({
             component: MovieDetail,
-            title: movie.title,
             passProps: {
                 movie: movie,
-            }
+            },
         })
     }
 
