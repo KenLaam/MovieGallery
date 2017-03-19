@@ -21,8 +21,8 @@ import Progress from 'react-native-progress';
 import MovieDetail from "./movie_detail"
 
 export default class ListMovie extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             url: this.props.baseUrl,

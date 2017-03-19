@@ -39,7 +39,9 @@ export default class MovieGallery extends Component {
                     title='Now Playing'
                     selected={this.state.selectedTab === 'nowPlaying'}
                     onPress={() => {
-                        this._fetchNowPlaying()
+                        this.setState({
+                            selectedTab: 'nowPlaying',
+                        })
                     }}
                 >
                     <NavigatorIOS
@@ -60,7 +62,9 @@ export default class MovieGallery extends Component {
                     title='Top Rated'
                     selected={this.state.selectedTab === 'topRated'}
                     onPress={() => {
-                       this._fetchTopRated()
+                       this.setState({
+                            selectedTab: 'topRated',
+                        })
                     }}
                 >
                     <NavigatorIOS
