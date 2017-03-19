@@ -18,6 +18,7 @@ import {
 import Image from 'react-native-image-progress';
 import Progress from 'react-native-progress';
 
+import MovieDetail from "./movie_detail"
 
 export default class ListMovie extends Component {
 
@@ -90,7 +91,7 @@ export default class ListMovie extends Component {
             <TabBarIOS
                 tintColor='black'
                 unselectedTintColor='#8F9393'
-                barTintColor='#EABD67'>
+                barTintColor='#FFA726'>
                 <TabBarIOS.Item
                     icon={require('./assets/ic_play.png')}
                     title='Now Playing'
@@ -111,7 +112,6 @@ export default class ListMovie extends Component {
                 >
                     {this._renderMovieList()}
                 </TabBarIOS.Item>
-
             </TabBarIOS>
         );
     }
@@ -119,7 +119,6 @@ export default class ListMovie extends Component {
     _renderMovieList() {
         return (
             <View style={styles.container}>
-                <StatusBar hidden={true}/>
                 <ListView
                     refreshControl={
                         <RefreshControl
@@ -163,14 +162,20 @@ export default class ListMovie extends Component {
     }
 
     _clickToDetail(movie) {
-        console.log('Movie  id', movie.id);
+        this.props.navigator.push({
+            component: MovieDetail,
+            title: movie.title,
+            passProps: {
+                movie: movie,
+            }
+        })
     }
 
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'orange',
+        backgroundColor: '#FF9800',
     },
 
     row: {

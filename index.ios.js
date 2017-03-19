@@ -24,7 +24,8 @@ export default class MovieGallery extends Component {
                     title: 'Movie Gallery',
                 }}
                 style={styles.navbar}
-                barTintColor={'orange'}
+                barTintColor={'#FFA726'}
+                shadowHidden={false}
             />
         );
     }
@@ -33,7 +34,7 @@ export default class MovieGallery extends Component {
 const styles = StyleSheet.create({
     navbar: {
         flex: 1,
-        backgroundColor: 'orange',
+        backgroundColor: '#FF9800',
     }
 });
 
