@@ -29,7 +29,7 @@ export default class ListMovie extends Component {
             page: 1,
             movieList: [],
             movieDS: dataSource.cloneWithRows([]),
-            refreshing: false,
+            refreshing: true,
             selectedTab: 'nowPlaying',
         };
     }
@@ -45,10 +45,7 @@ export default class ListMovie extends Component {
             refreshing: true,
         });
 
-        this._fetchData()
-            .then(() => this.setState({
-                refreshing: false,
-            }));
+        this._fetchData();
     }
 
     _fetchData() {
@@ -58,7 +55,8 @@ export default class ListMovie extends Component {
                 this.setState({
                     page: this.state.page++,
                     movieList: this.state.movieList.concat(responseJson.results),
-                    movieDS: this.state.movieDS.cloneWithRows(this.state.movieList.concat(responseJson.results))
+                    movieDS: this.state.movieDS.cloneWithRows(this.state.movieList.concat(responseJson.results)),
+                    refreshing: false,
                 });
             })
             .catch((error) => {
@@ -105,6 +103,7 @@ export default class ListMovie extends Component {
                     onPress={() => {
                        this._fetchTopRated()
                     }}
+                    style={styles.icon}
                 >
                     {this._renderMovieList()}
                 </TabBarIOS.Item>
@@ -197,6 +196,11 @@ const styles = StyleSheet.create({
 
     description: {
         fontSize: 16,
+    },
+
+    icon: {
+        height: 24,
+        width: 24,
     },
 });
 module.exports = ListMovie;
